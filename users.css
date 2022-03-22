@@ -1,0 +1,40 @@
+.heading{
+    font-weight: bold;
+    padding: 50px;
+}
+
+#users{
+    display: none;
+}
+
+.flex-parent{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-top: 30px;
+}
+
+.jc-center{
+    justify-content: center;
+}
+
+button{
+    margin-right: 5px!important;
+}
+
+#add_row{
+    margin-left: 10px;
+}
+
+table input{
+    max-width: 150px;
+    min-width: 140px;
+}
+
+.actionBtn{
+    margin-left: 0!important;
+}
+
+select {
+    height: 26px;
+}
