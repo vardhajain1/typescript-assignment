@@ -22,14 +22,15 @@ enum Roles {
     Admin,
     Subscriber
 }
-interface CRUD {
+interface CRUD<Type> {
     type: string;
-    value?: object;
+    value?:Type;
     index?:number;
 }
 class UserTable {
     users=[];
     initUsers:boolean;
+
     constructor() {
         window.onload = () => {
             document.getElementById('loadData').addEventListener('click', (e: Event) => {
@@ -85,10 +86,10 @@ class UserTable {
     }
 
     deleteUser(user) {
-        let req:CRUD={
-        type:'DELETE',
-        index:user.value
-        }
+        let req:CRUD<object>={
+            type:'DELETE',
+            index:user.value
+            }
         this.executeRequest(req);
     }
 
@@ -192,7 +193,7 @@ class UserTable {
     }
 
     save(user,row){
-        let req:CRUD
+        let req:CRUD<object>
         if(row<this.users.length){
             req={
                 type:'PUT',
@@ -210,7 +211,7 @@ class UserTable {
     }
 
 
-    executeRequest(req){
+    executeRequest(req:CRUD<object>){
         let users= JSON.parse(localStorage.getItem('users'));
         switch(req.type){
             case 'POST':
@@ -288,8 +289,29 @@ class UserTable {
         return div
     }
 
-    
-
 }
+
+// function first() {
+//     console.log("first(): factory evaluated");
+//     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+//       console.log("first(): called");
+//     };
+//   }
+   
+//   function second() {
+//     console.log("second(): factory evaluated");
+//     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+//       console.log("second(): called");
+//     };
+//   }
+   
+//   class ExampleClass {
+//     @first()
+//     @second()
+//     method() {}
+//   }
+
+//   new ExampleClass()
+
 
 new UserTable();
