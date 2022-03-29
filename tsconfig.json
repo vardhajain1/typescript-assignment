@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "target": "es6",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "lib": [
+            "es2016",
+            "esnext",
+            "dom"
+        ],
+        "esModuleInterop": true,
+        "declaration": true,
+    }
+}

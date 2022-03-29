@@ -1,3 +1,16 @@
+// import {convertDate} from './decorators'
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+//decorator function
+function convertDate() {
+    return function (target, propertyKey, descriptor) {
+        return Object.defineProperty(target, propertyKey, {});
+    };
+}
 var User = /** @class */ (function () {
     function User(obj) {
         this.firstName = obj.firstName || '';
@@ -7,7 +20,24 @@ var User = /** @class */ (function () {
         this.phoneNumber = obj.phoneNumber || '';
         this.role = obj.role || '';
         this.address = obj.address || '';
+        this.date = obj.date;
+        this.dateConversion();
     }
+    User.prototype.dateConversion = function () {
+        if (this.date) {
+            this.date = new Date(this.date).getDate() + "-" + this.getTwoDigits(new Date(this.date).getMonth() + 1) + "-" + this.getTwoDigits(new Date(this.date).getFullYear());
+        }
+        else {
+            this.date = new Date().getFullYear() + "-" + this.getTwoDigits(new Date().getMonth() + 1) + "-" + this.getTwoDigits(new Date().getDate());
+        }
+        console.log(this.date);
+    };
+    User.prototype.getTwoDigits = function (value) {
+        return +value < 9 ? '0' + value : value;
+    };
+    __decorate([
+        convertDate()
+    ], User.prototype, "dateConversion");
     return User;
 }());
 var Roles;
@@ -112,6 +142,11 @@ var UserTable = /** @class */ (function () {
                     input.value = Roles[columns[col].innerHTML];
                 });
             }
+            else if (columns[col].getAttribute('id') == "date") {
+                input = document.createElement('input');
+                input.type = 'date';
+                input.value = columns[col].innerHTML;
+            }
             else {
                 input = document.createElement('input');
                 input.type = 'text';
@@ -139,12 +174,15 @@ var UserTable = /** @class */ (function () {
         tr.id = 'row' + this.users.length;
         console.log(tr);
         var user = new User({});
+        // user.dateConversion();
+        console.log(user);
         var columns = Object.keys(user);
         var _loop_2 = function (col) {
             var input;
             var td = document.createElement('td');
             if (columns[col] == "role") {
                 input = document.createElement('select');
+                input.value = '';
                 Object.keys(Roles).forEach(function (ele) {
                     if (isNaN(ele)) {
                         var option = document.createElement('option');
@@ -154,14 +192,22 @@ var UserTable = /** @class */ (function () {
                     }
                 });
             }
+            else if (columns[col] == "date") {
+                input = document.createElement('input');
+                input.type = 'date';
+                console.log("user date", user.date);
+                input.value = String(user.date);
+            }
             else {
                 input = document.createElement('input');
                 input.type = 'text';
+                input.value = '';
             }
+            console.log(input, input.value);
             input.className = "userInputs";
             input.name = columns[col];
-            input.value = '';
             input.addEventListener('change', function (e) {
+                console.log("change");
                 var target = e.target;
                 _this.setValue(user, target);
             });

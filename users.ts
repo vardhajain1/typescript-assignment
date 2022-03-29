@@ -1,3 +1,10 @@
+// import {convertDate} from './decorators'
+
+//decorator function
+function convertDate(){
+    return (target,propertyKey,descriptor)=>
+      Object.defineProperty(target, propertyKey,{});
+}
 class User {
     public firstName: string;
     public middleName: string;
@@ -6,6 +13,7 @@ class User {
     public phoneNumber: number;
     public role: string;
     public address: string
+    public date:any
     constructor(obj) {
         this.firstName = obj.firstName ||'';
         this.middleName = obj.middleName || '';
@@ -14,6 +22,20 @@ class User {
         this.phoneNumber = obj.phoneNumber || '';
         this.role = obj.role || '';
         this.address = obj.address || '';
+        this.date= obj.date
+        this.dateConversion()
+    }
+    @convertDate()
+    dateConversion(){
+        if(this.date){
+        this.date=`${new Date(this.date).getDate()}-${this.getTwoDigits(new Date(this.date).getMonth()+1)}-${this.getTwoDigits(new Date(this.date).getFullYear())}`
+        } else{
+            this.date=`${new Date().getFullYear()}-${this.getTwoDigits(new Date().getMonth()+1)}-${this.getTwoDigits(new Date().getDate())}`
+        }
+        console.log(this.date)
+    }
+    getTwoDigits(value){
+        return +value<9?'0'+value:value;
     }
 }
 
@@ -126,7 +148,11 @@ class UserTable {
                     }
                     input.value=Roles[columns[col].innerHTML];
                 })
-            } else {
+            } else if(columns[col].getAttribute('id') == "date"){
+                input = document.createElement('input')
+                input.type='date';
+                input.value=columns[col].innerHTML;
+            }else {
                 input = document.createElement('input')
                 input.type='text';
                 input.value=columns[col].innerHTML;
@@ -152,6 +178,8 @@ class UserTable {
         tr.id = 'row' + this.users.length;
         console.log(tr)
         let user = new User({})
+        // user.dateConversion();
+        console.log(user)
 
         let columns = Object.keys(user)
         for (let col = 0; col < columns.length; col++) {
@@ -159,6 +187,7 @@ class UserTable {
             const td = document.createElement('td');
             if (columns[col] == "role") {
                 input = document.createElement('select')
+                input.value = '';
                 Object.keys(Roles).forEach((ele:any) => {
                     if(isNaN(ele)){
                     const option=document.createElement('option');
@@ -167,15 +196,23 @@ class UserTable {
                     input.appendChild(option)
                     }
                 })
+            }else if(columns[col] == "date"){
+                input = document.createElement('input')
+                input.type='date';
+                console.log("user date",user.date)
+                input.value=String(user.date)
             } else {
                 input = document.createElement('input')
                 input.type = 'text';
+                input.value = '';
 
             }
+            console.log(input,input.value)
             input.className = "userInputs";
             input.name = columns[col];
-            input.value = '';
+
             input.addEventListener('change', (e: Event) => {
+                console.log("change")
                 let target = e.target;
                 this.setValue(user, target)
             })
@@ -291,27 +328,6 @@ class UserTable {
 
 }
 
-// function first() {
-//     console.log("first(): factory evaluated");
-//     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-//       console.log("first(): called");
-//     };
-//   }
-   
-//   function second() {
-//     console.log("second(): factory evaluated");
-//     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-//       console.log("second(): called");
-//     };
-//   }
-   
-//   class ExampleClass {
-//     @first()
-//     @second()
-//     method() {}
-//   }
-
-//   new ExampleClass()
 
 
 new UserTable();
